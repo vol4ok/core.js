@@ -1,0 +1,16 @@
+{
+  "author": "vol4ok <hello@vol4ok.net>",
+  "name": "core.js",
+  "version": "0.1.0",
+  "repository": {
+    "url": ""
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "zappa": ">=0.3.3"
+  },
+  "optionalDependencies": {},
+  "engines": {
+    "node": "*"
+  }
+}
