@@ -1,4 +1,13 @@
+/*!
+ * Copyright (c) 2009-2012 Jeremy Ashkenas, DocumentCloud Inc.
+ * Copyright (c) 2012 Andrew Volkov <hello@vol4ok.net>
+ */
+
 (function($){
+
+  var
+    nativeBind = Function.prototype.bind;
+
   $.bind = function bind(func, context) {
     var bound, args;
     if (func.bind === nativeBind && nativeBind) return nativeBind.apply(func, slice.call(arguments, 1));

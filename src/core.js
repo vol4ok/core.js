@@ -11,7 +11,13 @@ var Core = (function() {
 
 (function($) {
 
-  $.slice = Array.prototype.slice;
+  $.slice   = Array.prototype.slice;
+  $.hasProp = $.hasOwnProperty = Object.prototype.hasOwnProperty;
+  $.indexOf = Array.prototype.indexOf;
+
+  $.bind = function(func, context) {
+    return Function.prototype.bind.apply(func, slice.call(arguments, 1));
+  };
 
   $.extend = function(target) {
     $.slice.call(arguments, 1).forEach(function(source) {
@@ -23,6 +29,19 @@ var Core = (function() {
   $.ext = function() {
     $.extend.apply(this, [this].concat($.slice.call(arguments)) );
   }
+
+  $.inherit = function(child, parent) {
+    for (var key in parent) {
+      if (hasProp.call(parent, key)) child[key] = parent[key];
+    }
+    function ctor() {
+      this.constructor = child;
+    }
+    ctor.prototype = parent.prototype;
+    child.prototype = new ctor;
+    child.__super__ = parent.prototype;
+    return child;
+  };
 
 })(Core);
 

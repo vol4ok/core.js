@@ -1,23 +1,10 @@
 (function($){
     var 
-    slice    = Array.prototype.slice,
-    unshift  = Array.prototype.unshift,
-    toString = Object.prototype.toString,
-    hasProp  = Object.prototype.hasOwnProperty;
-
-  var
-    nativeForEach     = Array.prototype.forEach,
-    nativeMap         = Array.prototype.map,
-    nativeReduce      = Array.prototype.reduce,
-    nativeReduceRight = Array.prototype.reduceRight,
-    nativeFilter      = Array.prototype.filter,
-    nativeEvery       = Array.prototype.every,
-    nativeSome        = Array.prototype.some,
-    nativeIndexOf     = Array.prototype.indexOf,
-    nativeLastIndexOf = Array.prototype.lastIndexOf,
-    nativeIsArray     = Array.isArray,
-    nativeKeys        = Object.keys,
-    nativeBind        = Function.prototype.bind;
+    slice         = $.slice,
+    hasProp       = $.hasProp,
+    toString      = Object.prototype.toString,
+    nativeIsArray = Array.isArray,
+    nativeKeys    = Object.keys;
     
   $.keys = nativeKeys || function(obj) {
     if (obj !== Object(obj)) throw new TypeError('Invalid object');
@@ -221,16 +208,4 @@
   
   $.deepExtend = function(target) {}
   
-  $.inherit = function(child, parent) {
-    for (var key in parent) {
-      if (hasProp.call(parent, key)) child[key] = parent[key];
-    }
-    function ctor() {
-      this.constructor = child;
-    }
-    ctor.prototype = parent.prototype;
-    child.prototype = new ctor;
-    child.__super__ = parent.prototype;
-    return child;
-  };
 })(Core);

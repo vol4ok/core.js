@@ -1,25 +1,15 @@
+/*!
+ * Copyright (c) 2009-2012 Jeremy Ashkenas, DocumentCloud Inc.
+ * Copyright (c) 2012 Andrew Volkov <hello@vol4ok.net>
+ */
+
 (function ($) {
   var 
-    slice    = Array.prototype.slice,
-    unshift  = Array.prototype.unshift,
-    toString = Object.prototype.toString,
-    hasProp  = Object.prototype.hasOwnProperty;
-
-  var
-    nativeForEach     = Array.prototype.forEach,
-    nativeMap         = Array.prototype.map,
-    nativeReduce      = Array.prototype.reduce,
-    nativeReduceRight = Array.prototype.reduceRight,
-    nativeFilter      = Array.prototype.filter,
-    nativeEvery       = Array.prototype.every,
-    nativeSome        = Array.prototype.some,
+    slice             = $.slice,
     nativeIndexOf     = Array.prototype.indexOf,
-    nativeLastIndexOf = Array.prototype.lastIndexOf,
-    nativeIsArray     = Array.isArray,
-    nativeKeys        = Object.keys,
-    nativeBind        = Function.prototype.bind;
+    nativeLastIndexOf = Array.prototype.lastIndexOf;
     
-  $.first = $.head = function(array, n, guard) {
+  $.first = function(array, n, guard) {
     return (n != null) && !guard ? slice.call(array, 0, n) : array[0];
   };
 

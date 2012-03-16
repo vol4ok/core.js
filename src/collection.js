@@ -1,23 +1,22 @@
+/*!
+ * Copyright (c) 2009-2012 Jeremy Ashkenas, DocumentCloud Inc.
+ * Copyright (c) 2012 Andrew Volkov <hello@vol4ok.net>
+ */
+
 (function($){
   var 
-    slice    = Array.prototype.slice,
-    unshift  = Array.prototype.unshift,
-    toString = Object.prototype.toString,
-    hasProp  = Object.prototype.hasOwnProperty;
+    ArrayProto        = Array.prototype,
+    slice             = $.slice,
+    nativeForEach     = ArrayProto.forEach,
+    nativeMap         = ArrayProto.map,
+    nativeReduce      = ArrayProto.reduce,
+    nativeReduceRight = ArrayProto.reduceRight,
+    nativeFilter      = ArrayProto.filter,
+    nativeEvery       = ArrayProto.every,
+    nativeSome        = ArrayProto.some,
+    nativeIndexOf     = ArrayProto.indexOf;
 
-  var
-    nativeForEach     = Array.prototype.forEach,
-    nativeMap         = Array.prototype.map,
-    nativeReduce      = Array.prototype.reduce,
-    nativeReduceRight = Array.prototype.reduceRight,
-    nativeFilter      = Array.prototype.filter,
-    nativeEvery       = Array.prototype.every,
-    nativeSome        = Array.prototype.some,
-    nativeIndexOf     = Array.prototype.indexOf,
-    nativeLastIndexOf = Array.prototype.lastIndexOf,
-    nativeIsArray     = Array.isArray,
-    nativeKeys        = Object.keys,
-    nativeBind        = Function.prototype.bind;
+    var breaker = {};
     
     var each = $.each = $.forEach = function(obj, iterator, context) {
       if (obj == null) return;
@@ -80,7 +79,7 @@
   };
 
 
-  $.find = $.detect = function(obj, iterator, context) {
+  $.find = function(obj, iterator, context) {
     var result;
     any(obj, function(value, index, list) {
       if (iterator.call(context, value, index, list)) {
