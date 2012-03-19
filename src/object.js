@@ -1,3 +1,8 @@
+/*!
+ * Copyright (c) 2009-2012 Jeremy Ashkenas, DocumentCloud Inc.
+ * Copyright (c) 2012 Andrew Volkov <hello@vol4ok.net>
+ */
+ 
 (function($){
     var 
     slice         = $.slice,

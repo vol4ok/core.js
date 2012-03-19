@@ -338,5 +338,12 @@
 
     return exports;
   }({})
+
+  $.get   = $.xhr.get  
+  $.head  = $.xhr.head 
+  $.del   = $.xhr.del  
+  $.patch = $.xhr.patch
+  $.post  = $.xhr.post 
+  $.put   = $.xhr.put  
   
 })(Core);

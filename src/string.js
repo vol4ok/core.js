@@ -1,3 +1,8 @@
+/*!
+ * Copyright (c) 2011 Esa-Matti Suuronen <esa-matti@suuronen.org>
+ * Copyright (c) 2012 Andrew Volkov <hello@vol4ok.net>
+ */
+
 (function($){
 
     var
