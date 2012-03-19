@@ -8,5 +8,7 @@
       return v.toString(16);
     }).toUpperCase();
   };
+
+  $.noop = function(){};
   
 })(Core);

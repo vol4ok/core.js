@@ -28,16 +28,6 @@
   };
 
 
-  $.extend = function(obj) {
-    each(slice.call(arguments, 1), function(source) {
-      for (var prop in source) {
-        obj[prop] = source[prop];
-      }
-    });
-    return obj;
-  };
-
-
   $.defaults = function(obj) {
     each(slice.call(arguments, 1), function(source) {
       for (var prop in source) {

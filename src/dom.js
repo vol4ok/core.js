@@ -6,41 +6,41 @@
 
 (function($){
 
-  var Dom = (function(Core) {
-    var
-      camelize  = Core.camelize,
-      dasherize = Core.dasherize, 
-      each      = Core.each,
-      uniq      = Core.uniq,
-      slice     = Core.slice,
-      compact   = Core.compact
-      plunk     = Core.plunk,
-      map       = Core.map,
-      isF       = Core.isFunction,
-      isO       = Core.isObject,
-      isA       = Core.isArray;
+  var extend     = $.extend
+    , camelize   = $.camelize
+    , dasherize  = $.dasherize
+    , each       = $.each
+    , uniq       = $.uniq
+    , slice      = $.slice
+    , compact    = $.compac
+    , plunk      = $.plunk
+    , map        = $.map
+    , isFunction = $.isFunction
+    , isObject   = $.isObject
+    , isArray    = $.isArray;
+
+  $.Dom = (function(Core) {
     
-    var
-      document = window.document,
-      getComputedStyle = document.defaultView.getComputedStyle,
-      elementTypes = [1, 9, 11], //ELEMENT_NODE, DOCUMENT_NODE, DOCUMENT_FRAGMENT_NODE
-      classSelectorRE = /^\.([\w-]+)$/,
-      idSelectorRE = /^#([\w-]+)$/,
-      tagSelectorRE = /^[\w-]+$/;
-      fragmentRE = /^\s*<(\w+)[^>]*>/,
-      table = document.createElement('table'),
-      tableRow = document.createElement('tr'),
-      containers = {
-        'tr': document.createElement('tbody'),
-        'tbody': table, 
-        'thead': table, 
-        'tfoot': table,
-        'td': tableRow, 
-        'th': tableRow,
-        '*': document.createElement('div')
-      },
-      slice = Array.prototype.slice,
-      rclass = /[\n\t\r]/g;
+    var document = window.document
+      , getComputedStyle = document.defaultView.getComputedStyle
+      , elementTypes     = [1, 9, 11] //ELEMENT_NODE, DOCUMENT_NODE, DOCUMENT_FRAGMENT_NODE
+      , classSelectorRE  = /^\.([\w-]+)$/
+      , idSelectorRE     = /^#([\w-]+)$/
+      , tagSelectorRE    = /^[\w-]+$/
+      , fragmentRE       = /^\s*<(\w+)[^>]*>/
+      , classRE          = /[\n\t\r]/g
+      , table            = document.createElement('table')
+      , tableRow         = document.createElement('tr')
+      , containers       = {
+            'tr': document.createElement('tbody')
+          , 'tbody': table 
+          , 'thead': table 
+          , 'tfoot': table
+          , 'td': tableRow 
+          , 'th': tableRow
+          , '*': document.createElement('div')
+        };
+      
         
     var fragment, filtered, funcArg, maybeAddPx, $, $$;
       
@@ -57,29 +57,25 @@
     }
 
     funcArg = function(context, arg, idx, payload) {
-      return isF(arg) ? arg.call(context, idx, payload) : arg;
+      return isFunction(arg) ? arg.call(context, idx, payload) : arg;
     }
     
     maybeAddPx = function(name, value) { 
       return (typeof value == "number" && !cssNumber[dasherize(name)]) ? value + "px" : value; 
     }
 
-    Dom.extend = function() {
-      Core.extend.apply(this, [this].concat($.slice.call(arguments)) );
-    };
-
     $ = Dom.$ = function(selector, context) {
       if (!selector)
         return Dom();
       if (context !== undefined) 
         return $(context).find(selector);
-      else if (isF(selector))
+      else if (isFunction(selector))
         return $(document).ready(selector);
       else if (selector instanceof Dom) 
         return selector;
       else {
         var dom;
-        if (isA(selector)) 
+        if (isArray(selector)) 
           dom = compact(selector);
         else if (elementTypes.indexOf(selector.nodeType) >= 0 || selector === window)
           dom = [selector], selector = null;
@@ -93,7 +89,7 @@
       }
     }
     
-    $$ = Dom._$$ = function(element, selector){
+    $$ = function(element, selector){
       var found;
       return (element === document && idSelectorRE.test(selector)) ?
         ( (found = element.getElementById(RegExp.$1)) ? [found] : emptyArray ) :
@@ -103,10 +99,6 @@
             tagSelectorRE.test(selector) ? element.getElementsByTagName(selector) :
             element.querySelectorAll(selector)
         );
-    }
-
-    Dom.extend = function(){
-      extend.apply(this, args)
     }
     
     Dom.fn = {
@@ -122,6 +114,13 @@
         each(this, function(el, idx){ 
           callback.call(el, idx, el) 
         });
+        return this;
+      },
+
+      ready: function(callback){
+        if (readyRE.test(document.readyState)) 
+          callback($);
+        else document.addEventListener('DOMContentLoaded', function(){ callback($) }, false);
         return this;
       },
       
@@ -201,12 +200,12 @@
       
       first: function() {
         var el = this[0]; 
-        return el && !isO(el) ? el : $(el);
+        return el && !isObject(el) ? el : $(el);
       },
       
       last: function() {
         var el = this[this.length - 1]; 
-        return el && !isO(el) ? el : $(el);
+        return el && !isObject(el) ? el : $(el);
       },
       
       filter: function(selector) {
@@ -221,13 +220,13 @@
       
       not: function(selector) {
         var nodes=[];
-        if (isF(selector) && selector.call !== undefined)
+        if (isFunction(selector) && selector.call !== undefined)
           this.each(function(idx){
             if (!selector.call(this,idx)) nodes.push(this);
           });
         else {
           var excludes = typeof selector == 'string' ? this.filter(selector) :
-            (likeArray(selector) && isF(selector.item)) ? slice.call(selector) : $(selector);
+            (likeArray(selector) && isFunction(selector.item)) ? slice.call(selector) : $(selector);
           this.forEach(function(el){
             if (excludes.indexOf(el) < 0) nodes.push(el);
           });
@@ -305,7 +304,7 @@
         for ( ; i < l; i++ ) {
           if ( this[i].nodeType === 1 
                && (" " + this[i].className + " ")
-                .replace(rclass, " ")
+                .replace(classRE, " ")
                 .indexOf( className ) > -1 ) 
           {
             return true;
@@ -344,7 +343,7 @@
             (!(res = this[0].getAttribute(name)) && name in this[0]) ? this[0][name] : res
           ) :
           this.each(function(idx){
-            if (isO(name)) for (key in name) this.setAttribute(key, name[key])
+            if (isObject(name)) for (key in name) this.setAttribute(key, name[key])
             else this.setAttribute(name, funcArg(this, value, idx, this.getAttribute(name)));
           });
       },
@@ -442,7 +441,7 @@
     
     [ 'after', 'prepend', 'before', 'append' ].forEach(function(key, operator) {
       Dom.fn[key] = function(html){
-        var nodes = isO(html) ? html : fragment(html);
+        var nodes = isObject(html) ? html : fragment(html);
         if (!('length' in nodes) || nodes.nodeType) nodes = [nodes];
         if (nodes.length < 1) return this;
         var 
@@ -472,6 +471,7 @@
         $(html)[key](this);
         return this;
       };
+
     });
     
     Dom.constructor = function(dom, selector){
@@ -481,10 +481,267 @@
       return dom;
     };
     
-    Dom.prototype = Dom.fn
+    Dom.prototype = Dom.fn;
     function Dom() { return Dom.constructor.apply(this, arguments) }
     return Dom;
   })($);
 
-  $.Dom = $.constructor = Dom.$;
+
+  /* EVENTS
+   ================================================================================================ */
+
+
+  (function(Dom) {
+
+    var Event
+      , _zid = 1
+      , handlers = {}
+      , specialEvents = {}
+      , readyRE = /complete|loaded|interactive/;
+
+
+    function zid(element) {
+      return element._zid || (element._zid = _zid++);
+    }
+
+
+    function parse(event) {
+      var parts = ('' + event).split('.');
+      return {
+          e: parts[0]
+        , ns: parts
+          .slice(1)
+          .sort()
+          .join(' ')
+      };
+    }
+
+
+    function eachEvent(events, fn, iterator) {
+      if (isObject(events)) 
+        each(events, iterator);
+      else 
+        events.split(/\s/).forEach(function(type){ 
+          iterator(type, fn) 
+        });
+    }
+
+
+    function findHandlers(element, event, fn, selector) {
+      event = parse(event);
+      if (event.ns) var matcher = matcherFor(event.ns);
+      return (handlers[zid(element)] || []).filter(function(handler) {
+        return handler
+          && (!event.e  || handler.e == event.e)
+          && (!event.ns || matcher.test(handler.ns))
+          && (!fn       || handler.fn == fn)
+          && (!selector || handler.sel == selector);
+      });
+    }
+
+
+    function add(element, events, fn, selector, getDelegate) {
+      var id = zid(element)
+        , set = (handlers[id] || (handlers[id] = []));
+      eachEvent(events, fn, function(event, fn) {
+        var delegate = getDelegate && getDelegate(fn, event)
+          , callback = delegate || fn;
+        var proxyfn = function (event) {
+          var result = callback.apply(element, [event].concat(event.data));
+          if (result === false) 
+            event.preventDefault();
+          return result;
+        };
+        var handler = Core.extend(parse(event), {
+            fn: fn
+          , proxy: proxyfn
+          , sel: selector
+          , del: delegate
+          , i: set.length
+        });
+        set.push(handler);
+        element.addEventListener(handler.e, proxyfn, false);
+      });
+    }
+
+
+    function findHandlers(element, event, fn, selector) {
+      var event = parse(event);
+      if (event.ns) 
+        var matcher = matcherFor(event.ns);
+      return (handlers[zid(element)] || []).filter(function(handler) {
+        return handler
+          && (!event.e  || handler.e == event.e)
+          && (!event.ns || matcher.test(handler.ns))
+          && (!fn       || handler.fn == fn)
+          && (!selector || handler.sel == selector);
+      });
+    }
+
+
+    function remove(element, events, fn, selector) {
+      var id = zid(element);
+      eachEvent(events || '', fn, function(event, fn){
+        findHandlers(element, event, fn, selector).forEach(function(handler){
+          delete handlers[id][handler.i];
+          element.removeEventListener(handler.e, handler.proxy, false);
+        });
+      });
+    }
+
+    Dom.event = { add: add, remove: remove }
+
+
+    function fix(event) {
+      if (!('defaultPrevented' in event)) {
+        event.defaultPrevented = false;
+        var prevent = event.preventDefault;
+        event.preventDefault = function() {
+          this.defaultPrevented = true;
+          prevent.call(this);
+        }
+      }
+    }
+
+
+    var returnTrue = function()  { return true  }
+      , returnFalse = function() { return false }
+      , eventMethods = {
+          preventDefault: 'isDefaultPrevented'
+        , stopImmediatePropagation: 'isImmediatePropagationStopped'
+        , stopPropagation: 'isPropagationStopped'
+        };
+
+    function createProxy(event) {
+      var proxy = extend({originalEvent: event}, event);
+      each(eventMethods, function(name, predicate) {
+        proxy[name] = function(){
+          this[predicate] = returnTrue;
+          return event[name].apply(event, arguments);
+        };
+        proxy[predicate] = returnFalse;
+      })
+      return proxy;
+    }
+
+    extend(Dom.fn, {
+
+      on: function(event, selector, callback) {
+        return selector === undefined || $.isFunction(selector)
+          ? this.each(function(){ add(this, event, selector); }) 
+          : this.delegate(selector, event, callback);
+      },
+
+      
+      off: function(event, selector, callback) {
+        return selector === undefined || $.isFunction(selector)
+          ? this.each(function(){ remove(this, event, selector); }) 
+          : this.undelegate(selector, event, callback);
+      },
+
+
+      one: function(event, callback) {
+        return this.each(function(i, element){
+          add(this, event, callback, null, function(fn, type){
+            return function(){
+              var result = fn.apply(element, arguments);
+              remove(element, type, fn);
+              return result;
+            }
+          });
+        });
+      },
+
+
+      delegate: function(selector, event, callback) {
+        return this.each(function(i, element){
+          add(element, event, callback, selector, function(fn){
+            return function(e){
+              var evt
+                , match = $(e.target)
+                    .closest(selector, element)
+                    .get(0);
+              if (match) {
+                evt = extend(createProxy(e), {
+                  currentTarget: match
+                , liveFired: element
+                });
+                return fn.apply(match, [evt].concat(slice.call(arguments, 1)));
+              }
+            }
+          });
+        });
+      },
+
+
+      undelegate: function(selector, event, callback) {
+        return this.each(function(){
+          remove(this, event, callback, selector);
+        });
+      },
+
+
+      trigger: function(event, data){
+        if (typeof event == 'string') 
+          event = Event(event);
+        fix(event);
+        event.data = data;
+        return this.each(function(){ 
+          this.dispatchEvent(event) 
+        });
+      },
+
+
+      triggerHandler: function(event, data){
+        var e, result;
+        this.each(function(i, element){
+          e = createProxy(typeof event == 'string' ? Event(event) : event);
+          e.data = data; e.target = element;
+          each(findHandlers(element, event.type || event), function(i, handler){
+            result = handler.proxy(e);
+            if (e.isImmediatePropagationStopped()) return false;
+          });
+        });
+        return result;
+      }
+
+    });
+
+    [ "focusin", "focusout", "load", "resize", 
+      "scroll", "unload", "click", "dblclick", 
+      "mousedown", "mouseup", "mousemove", "mouseover", 
+      "mouseout", "change", "select", "keydown", 
+      "keypress", "keyup", "error"
+    ].forEach(function(event) {
+      Dom.fn[event] = function(callback){ 
+        return this.on(event, callback) 
+      };
+    });
+
+    ['focus', 'blur'].forEach(function(name) {
+      Dom.fn[name] = function(callback) {
+        if (callback) 
+          this.on(name, callback);
+        else if (this.length) 
+          try { 
+            this.get(0)[name]() 
+          } catch(e) {};
+        return this;
+      };
+    });
+
+    Event = Dom.Event = function(type, props) {
+      var event = document.createEvent(specialEvents[type] || 'Events')
+        , bubbles = true;
+      if (props) 
+        for (var name in props) 
+          (name == 'bubbles') ? (bubbles = !!props[name]) : (event[name] = props[name]);
+      event.initEvent(type, bubbles, true, null, null, null, 
+        null, null, null, null, null, null, null, null, null);
+      return event;
+    };
+
+  })($.Dom);
+
+  $.constructor = $.Dom.$;
 })(Core);
