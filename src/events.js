@@ -5,8 +5,8 @@
 
 (function($){
 
-  var addListener, 
-    isArray = $.isArray;
+  var addListener
+    , isArray = $.isArray;
 
   addListener = function (name, fn) {
     if (!this._events)

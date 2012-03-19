@@ -3,13 +3,12 @@
  * Copyright (c) 2012 Andrew Volkov <hello@vol4ok.net>
  */
 
-(function($){
+(function($) {
 
-    var
-      StringProto     = String.prototype
-      nativeTrim      = StringProto.trim,
-      nativeTrimRight = StringProto.trimRight,
-      nativeTrimLeft  = StringProto.trimLeft;
+    var StringProto     = String.prototype
+      , nativeTrim      = StringProto.trim
+      , nativeTrimRight = StringProto.trimRight
+      , nativeTrimLeft  = StringProto.trimLeft;
 
     $.titleize = function(str){
       return (''+str).replace(/\b./g, function(ch){ return ch.toUpperCase(); });

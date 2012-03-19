@@ -4,17 +4,16 @@
  */
 
 (function($){
-  var 
-    ArrayProto        = Array.prototype,
-    slice             = $.slice,
-    nativeForEach     = ArrayProto.forEach,
-    nativeMap         = ArrayProto.map,
-    nativeReduce      = ArrayProto.reduce,
-    nativeReduceRight = ArrayProto.reduceRight,
-    nativeFilter      = ArrayProto.filter,
-    nativeEvery       = ArrayProto.every,
-    nativeSome        = ArrayProto.some,
-    nativeIndexOf     = ArrayProto.indexOf;
+  var ArrayProto        = Array.prototype
+    , slice             = $.slice
+    , nativeForEach     = ArrayProto.forEach
+    , nativeMap         = ArrayProto.map
+    , nativeReduce      = ArrayProto.reduce
+    , nativeReduceRight = ArrayProto.reduceRight
+    , nativeFilter      = ArrayProto.filter
+    , nativeEvery       = ArrayProto.every
+    , nativeSome        = ArrayProto.some
+    , nativeIndexOf     = ArrayProto.indexOf;
 
     var breaker = {};
     

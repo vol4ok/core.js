@@ -4,10 +4,10 @@
  */
 
 (function ($) {
-  var 
-    slice             = $.slice,
-    nativeIndexOf     = Array.prototype.indexOf,
-    nativeLastIndexOf = Array.prototype.lastIndexOf;
+  
+  var slice             = $.slice
+    , nativeIndexOf     = Array.prototype.indexOf
+    , nativeLastIndexOf = Array.prototype.lastIndexOf
     
   $.first = function(array, n, guard) {
     return (n != null) && !guard ? slice.call(array, 0, n) : array[0];

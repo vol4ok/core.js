@@ -2,14 +2,13 @@
  * Copyright (c) 2009-2012 Jeremy Ashkenas, DocumentCloud Inc.
  * Copyright (c) 2012 Andrew Volkov <hello@vol4ok.net>
  */
- 
+
 (function($){
-    var 
-    slice         = $.slice,
-    hasProp       = $.hasProp,
-    toString      = Object.prototype.toString,
-    nativeIsArray = Array.isArray,
-    nativeKeys    = Object.keys;
+    var slice         = $.slice
+      , hasProp       = $.hasProp
+      , toString      = Object.prototype.toString
+      , nativeIsArray = Array.isArray
+      , nativeKeys    = Object.keys
     
   $.keys = nativeKeys || function(obj) {
     if (obj !== Object(obj)) throw new TypeError('Invalid object');

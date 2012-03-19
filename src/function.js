@@ -5,8 +5,7 @@
 
 (function($){
 
-  var
-    nativeBind = Function.prototype.bind;
+  var nativeBind = Function.prototype.bind;
 
   $.bind = function bind(func, context) {
     var bound, args;
