@@ -29,6 +29,7 @@
       , tagSelectorRE    = /^[\w-]+$/
       , fragmentRE       = /^\s*<(\w+)[^>]*>/
       , classRE          = /[\n\t\r]/g
+      , readyRE          = /complete|loaded|interactive/
       , table            = document.createElement('table')
       , tableRow         = document.createElement('tr')
       , containers       = {
@@ -496,8 +497,12 @@
     var Event
       , _zid = 1
       , handlers = {}
-      , specialEvents = {}
-      , readyRE = /complete|loaded|interactive/;
+      , specialEvents = {};
+
+    specialEvents.click 
+      = specialEvents.mousedown 
+      = specialEvents.mouseup 
+      = specialEvents.mousemove = 'MouseEvents';
 
 
     function zid(element) {
@@ -526,10 +531,14 @@
         });
     }
 
+    function matcherFor(ns) {
+      return new RegExp('(?:^| )' + ns.replace(' ', ' .* ?') + '(?: |$)');
+    }
 
     function findHandlers(element, event, fn, selector) {
       event = parse(event);
-      if (event.ns) var matcher = matcherFor(event.ns);
+      if (event.ns) 
+        var matcher = matcherFor(event.ns);
       return (handlers[zid(element)] || []).filter(function(handler) {
         return handler
           && (!event.e  || handler.e == event.e)
@@ -729,6 +738,25 @@
         return this;
       };
     });
+
+    each({mouseenter: "mouseover", mouseleave: "mouseout"}, function(fixed, orig) {
+
+      var contains = function( a, b ) {
+        return a !== b && (a.contains ? a.contains(b) : true);
+      };
+
+      console.log(orig, fixed);
+
+      Dom.fn[orig] = function(callback) { 
+
+        return this.on(fixed, function(event){
+          var related = event.relatedTarget;
+          if (!related || (related !== this && !this.contains(related)))
+            return callback.apply( this, arguments );
+        }); 
+      };
+    });
+
 
     Event = Dom.Event = function(type, props) {
       var event = document.createEvent(specialEvents[type] || 'Events')
