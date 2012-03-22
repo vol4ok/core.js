@@ -740,15 +740,7 @@
     });
 
     each({mouseenter: "mouseover", mouseleave: "mouseout"}, function(fixed, orig) {
-
-      var contains = function( a, b ) {
-        return a !== b && (a.contains ? a.contains(b) : true);
-      };
-
-      console.log(orig, fixed);
-
       Dom.fn[orig] = function(callback) { 
-
         return this.on(fixed, function(event){
           var related = event.relatedTarget;
           if (!related || (related !== this && !this.contains(related)))
