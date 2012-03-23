@@ -11,10 +11,7 @@ TARGETS = [
   'object.js'
   'function.js'
   'string.js'
-  'misc.js'
-  'dom.js'
-  'events.js'
-  'ajax.js' ]
+  'misc.js' ]
 
 build = (callback) ->
   ws = fs.createWriteStream "#{DST_DIR}/core.js", encoding: 'utf-8'
