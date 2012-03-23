@@ -12,6 +12,7 @@ TARGETS = [
   'function.js'
   'string.js'
   'misc.js'
+  'async.js'
   'dom.js'
   'events.js'
   'ajax.js' ]
