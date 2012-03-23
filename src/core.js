@@ -45,4 +45,4 @@ var Core = (function() {
 
 })(Core);
 
-var $ = Core;
+module.exports = Core;
