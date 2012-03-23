@@ -11,7 +11,8 @@ TARGETS = [
   'object.js'
   'function.js'
   'string.js'
-  'misc.js' ]
+  'misc.js' 
+  'async.js' ]
 
 build = (callback) ->
   ws = fs.createWriteStream "#{DST_DIR}/core.js", encoding: 'utf-8'
