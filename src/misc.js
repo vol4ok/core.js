@@ -10,5 +10,6 @@
   };
 
   $.noop = function(){};
+  $.identity = function(value) { return value; };
   
 })(Core);
