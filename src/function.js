@@ -5,7 +5,8 @@
 
 (function($){
 
-  var nativeBind = Function.prototype.bind;
+  var nativeBind = Function.prototype.bind
+    , slice = $.slice;
 
   $.bind = function bind(func, context) {
     var bound, args;
@@ -49,7 +50,7 @@
 
 
   $.defer = function(func) {
-    return $.delay.apply(_, [func, 1].concat(slice.call(arguments, 1)));
+    return $.delay.apply($, [func, 1].concat(slice.call(arguments, 1)));
   };
 
 
