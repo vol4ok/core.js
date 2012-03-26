@@ -32,7 +32,7 @@ var Core = (function() {
 
   $.inherit = function(child, parent) {
     for (var key in parent) {
-      if (hasProp.call(parent, key)) child[key] = parent[key];
+      if ($.hasProp.call(parent, key)) child[key] = parent[key];
     }
     function ctor() {
       this.constructor = child;
