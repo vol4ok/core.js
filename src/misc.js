@@ -8,6 +8,13 @@
       return v.toString(16);
     }).toUpperCase();
   };
+  
+  var idCounter = 0;
+  $.uniqId = function(prefix) {
+    var id = idCounter++;
+    return prefix ? prefix + id : id;
+  };
+
 
   $.noop = function(){};
   $.identity = function(value) { return value; };
