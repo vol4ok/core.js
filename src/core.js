@@ -42,6 +42,21 @@ var Core = (function() {
     child.__super__ = parent.prototype;
     return child;
   };
+  
+  $.ns = $.namespace = function(target, name, block) {
+    if (arguments.length < 3) {
+      block  = name;
+      name   = target;
+      target = typeof exports !== 'undefined' ? exports : window;
+    }
+    var i, len, item
+      , top = target
+      , scopes = name.split('.');
+    for (i = 0, len = scopes.length; i < len; i++)
+      scope = scopes[i];
+      target = target[scope] || (target[scope] = {});
+    return block(target, top);
+  };
 
 })(Core);
 
