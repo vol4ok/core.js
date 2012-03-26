@@ -126,6 +126,8 @@
       return true;
     }
   };
+  
+  $.extend($, EventEmitter.prototype)
 
   $.EventEmitter = EventEmitter
   function EventEmitter() {};
