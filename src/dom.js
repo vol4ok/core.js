@@ -9,6 +9,7 @@
   var extend     = $.extend
     , camelize   = $.camelize
     , dasherize  = $.dasherize
+    , trim       = $.trim
     , each       = $.each
     , uniq       = $.uniq
     , slice      = $.slice
@@ -29,6 +30,7 @@
       , tagSelectorRE    = /^[\w-]+$/
       , fragmentRE       = /^\s*<(\w+)[^>]*>/
       , classRE          = /[\n\t\r]/g
+      , spaceRE          = /\s+/
       , readyRE          = /complete|loaded|interactive/
       , table            = document.createElement('table')
       , tableRow         = document.createElement('tr')
@@ -283,18 +285,32 @@
       /* Attributes
       -------------------------------------------------------- */
       
-      addClass: function(name) {
-        return this.each(function(idx) {
-          var 
-            classList = [],
-            cls = this.className, 
-            newName = funcArg(this, name, idx, cls);
-          newName.split(/\s+/g).forEach(function(klass) {
-            if (!$(this).hasClass(klass))
-              classList.push(klass)
-          }, this);
-          classList.length && (this.className += (cls ? " " : "") + classList.join(" "))
-        });
+      addClass: function( value ) {
+        var classNames, i, l, elem, setClass, c, cl;
+
+        if (isFunction(value))
+          return this.each(function( j ) {
+            $(this).addClass(value.call(this, j, this.className));
+          });
+
+        if (value && typeof value === "string") {
+          classNames = value.split( spaceRE );
+          for ( i = 0, l = this.length; i < l; i++ ) {
+            elem = this[ i ];
+            if ( elem.nodeType === 1 ) {
+              if ( !elem.className && classNames.length === 1 ) {
+                elem.className = value;
+              } else {
+                setClass = " " + elem.className + " ";
+                for ( c = 0, cl = classNames.length; c < cl; c++ )
+                  if ( !~setClass.indexOf( " " + classNames[ c ] + " " ) )
+                    setClass += classNames[ c ] + " ";
+                elem.className = trim(setClass);
+              }
+            }
+          }
+        }
+        return this;
       },
       
       hasClass: function(name) {
@@ -306,7 +322,7 @@
           if ( this[i].nodeType === 1 
                && (" " + this[i].className + " ")
                 .replace(classRE, " ")
-                .indexOf( className ) > -1 ) 
+                .indexOf(className) > -1)
           {
             return true;
           }
@@ -322,18 +338,30 @@
         });
       },
       
-      removeClass: function(name) {
-        return this.each(function(idx) {
-          if(name === undefined)
-            return this.className = '';
-          var classList = this.className;
-          funcArg(this, name, idx, classList)
-            .split(/\s+/g)
-            .forEach(function(klass) {
-              classList = classList.replace(classRE(klass), " ")
-            });
-          this.className = classList.trim()
-        });
+      removeClass: function( value ) {
+        var classNames, i, l, elem, className, c, cl;
+
+        if (isFunction( value ))
+          return this.each(function( j ) {
+            $(this).removeClass( value.call(this, j, this.className) );
+          });
+
+        if ((value && typeof value === "string") || value === undefined) {
+          classNames = ( value || "" ).split( spaceRE );
+          for ( i = 0, l = this.length; i < l; i++ ) {
+            elem = this[i];
+            if ( elem.nodeType === 1 && elem.className )
+              if ( value ) {
+                className = (" " + elem.className + " ").replace( classRE, " " );
+                for ( c = 0, cl = classNames.length; c < cl; c++ )
+                  className = className.replace(" " + classNames[ c ] + " ", " ");
+                elem.className = trim( className );
+
+              } else
+                elem.className = "";
+          }
+        }
+        return this;
       },
       
       attr: function(name, value) {
