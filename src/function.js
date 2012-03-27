@@ -48,7 +48,6 @@
   };
 
 
-
   $.defer = function(func) {
     return $.delay.apply($, [func, 1].concat(slice.call(arguments, 1)));
   };
