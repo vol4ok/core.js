@@ -98,7 +98,7 @@
   };
 
 
-  $.indexOf = function(array, item, isSorted) {
+  $.index = function(array, item, isSorted) {
     if (array == null) return -1;
     var i, l;
     if (isSorted) {
@@ -110,7 +110,7 @@
     return -1;
   };
 
-  $.lastIndexOf = function(array, item) {
+  $.lastIndex = function(array, item) {
     if (array == null) return -1;
     if (nativeLastIndexOf && array.lastIndexOf === nativeLastIndexOf) return array.lastIndexOf(item);
     var i = array.length;
