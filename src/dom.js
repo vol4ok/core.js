@@ -13,8 +13,8 @@
     , each       = $.each
     , uniq       = $.uniq
     , slice      = $.slice
-    , compact    = $.compac
-    , plunk      = $.plunk
+    , compact    = $.compact
+    , pluck      = $.pluck
     , map        = $.map
     , isFunction = $.isFunction
     , isObject   = $.isObject
@@ -423,7 +423,7 @@
           width: obj.width,
           height: obj.height
         };
-      },
+      }
       
     };
     
@@ -542,10 +542,7 @@
       var parts = ('' + event).split('.');
       return {
           e: parts[0]
-        , ns: parts
-          .slice(1)
-          .sort()
-          .join(' ')
+        , ns: parts.slice(1).sort().join(' ')
       };
     }
 
@@ -575,32 +572,80 @@
           && (!selector || handler.sel == selector);
       });
     }
+    
+    var returnTrue = function()  { return true  }
+      , returnFalse = function() { return false }
+      , eventMethods = {
+          preventDefault: 'isDefaultPrevented'
+        , stopImmediatePropagation: 'isImmediatePropagationStopped'
+        , stopPropagation: 'isPropagationStopped'
+        };
 
+    function createProxy(event) {
+      var proxy = {};
+      for (key in event) {
+        if (key !== "layerX" && key !== "layerY")
+          proxy[key] = event[key]
+      }
+      proxy.originalEvent = event;
+      each(eventMethods, function(name, predicate) {
+        proxy[name] = function(){
+          this[predicate] = returnTrue;
+          return event[name].apply(event, arguments);
+        };
+        proxy[predicate] = returnFalse;
+      })
+      return proxy;
+    }
 
+    var eventRepl = {mouseenter: "mouseover", mouseleave: "mouseout"};
+    
     function add(element, events, fn, selector, getDelegate) {
       var id = zid(element)
         , set = (handlers[id] || (handlers[id] = []));
       eachEvent(events, fn, function(event, fn) {
         var delegate = getDelegate && getDelegate(fn, event)
           , callback = delegate || fn;
+        
+        var handler = parse(event)
+          , e = handler.e;
+        
+        if (eventRepl[e]) {
+          callback = (function(cb, orig, repl) {
+            return function(event) {
+              var result
+                , related = event.relatedTarget;
+              if (!related || (related !== this && !this.contains(related))){
+                ev = createProxy(event);
+                ev.type = orig;
+                result = cb.apply(this, [ev].concat(slice.call(arguments,1)));
+                ev.type = repl;
+              }
+              return result;
+            };
+          })(callback, e, eventRepl[e]);
+          handler.e = e = eventRepl[e];
+        }
+        
         var proxyfn = function (event) {
           var result = callback.apply(element, [event].concat(event.data));
           if (result === false) 
             event.preventDefault();
           return result;
         };
-        var handler = Core.extend(parse(event), {
+        
+        handler = extend(handler, {
             fn: fn
           , proxy: proxyfn
           , sel: selector
           , del: delegate
           , i: set.length
         });
+        
         set.push(handler);
-        element.addEventListener(handler.e, proxyfn, false);
+        element.addEventListener(e, proxyfn, false);
       });
     }
-
 
     function findHandlers(element, event, fn, selector) {
       var event = parse(event);
@@ -640,27 +685,6 @@
       }
     }
 
-
-    var returnTrue = function()  { return true  }
-      , returnFalse = function() { return false }
-      , eventMethods = {
-          preventDefault: 'isDefaultPrevented'
-        , stopImmediatePropagation: 'isImmediatePropagationStopped'
-        , stopPropagation: 'isPropagationStopped'
-        };
-
-    function createProxy(event) {
-      var proxy = extend({originalEvent: event}, event);
-      each(eventMethods, function(name, predicate) {
-        proxy[name] = function(){
-          this[predicate] = returnTrue;
-          return event[name].apply(event, arguments);
-        };
-        proxy[predicate] = returnFalse;
-      })
-      return proxy;
-    }
-
     extend(Dom.fn, {
 
       on: function(event, selector, callback) {
@@ -697,7 +721,7 @@
               var evt
                 , match = $(e.target)
                     .closest(selector, element)
-                    .get(0);
+                    .at(0);
               if (match) {
                 evt = extend(createProxy(e), {
                   currentTarget: match
@@ -747,8 +771,8 @@
     [ "focusin", "focusout", "load", "resize", 
       "scroll", "unload", "click", "dblclick", 
       "mousedown", "mouseup", "mousemove", "mouseover", 
-      "mouseout", "change", "select", "keydown", 
-      "keypress", "keyup", "error"
+      "mouseout", "mouseenter", "mouseleave", "change", 
+      "select", "keydown", "keypress", "keyup", "error"
     ].forEach(function(event) {
       Dom.fn[event] = function(callback){ 
         return this.on(event, callback) 
@@ -764,16 +788,6 @@
             this.get(0)[name]() 
           } catch(e) {};
         return this;
-      };
-    });
-
-    each({mouseenter: "mouseover", mouseleave: "mouseout"}, function(fixed, orig) {
-      Dom.fn[orig] = function(callback) { 
-        return this.on(fixed, function(event){
-          var related = event.relatedTarget;
-          if (!related || (related !== this && !this.contains(related)))
-            return callback.apply( this, arguments );
-        }); 
       };
     });
 
