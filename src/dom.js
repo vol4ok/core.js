@@ -384,7 +384,12 @@
       },
       
       data: function(name, value) {
-        return this.attr('data-' + name, value);
+        var d = this[0].dataset;
+        if (value === undefined)
+          return name === undefined ? d : d[name];
+        else 
+          d[name] = value;
+          return this;
       },
       
       val: function() {
