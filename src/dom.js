@@ -14,6 +14,7 @@
     , uniq       = $.uniq
     , slice      = $.slice
     , compact    = $.compact
+    , flatten    = $.flatten
     , pluck      = $.pluck
     , map        = $.map
     , isFunction = $.isFunction
@@ -154,9 +155,9 @@
       },
       
       children: function(selector) {
-        return filtered(this.map(function(){ 
+        return filtered(flatten(this.map(function(){ 
           return slice.call(this.children);
-        }), selector);
+        })), selector);
       },
       
       parent: function(selector) {
