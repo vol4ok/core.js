@@ -23,6 +23,7 @@
   $.Dom = (function(Core) {
     
     var document = window.document
+      , emptyArray       = []
       , getComputedStyle = document.defaultView.getComputedStyle
       , elementTypes     = [1, 9, 11] //ELEMENT_NODE, DOCUMENT_NODE, DOCUMENT_FRAGMENT_NODE
       , classSelectorRE  = /^\.([\w-]+)$/
