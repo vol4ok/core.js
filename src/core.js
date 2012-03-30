@@ -22,7 +22,7 @@ var Core = (function() {
   $.extend = function(target) {
     $.slice.call(arguments, 1).forEach(function(source) {
       for (key in source) target[key] = source[key];
-    })
+    });
     return target;
   }
 
