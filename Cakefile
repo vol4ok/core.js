@@ -55,9 +55,9 @@ buildNode = () ->
     console.log('start to compile a node-js package')
     fs.mkdirSync("#{DST_NODE_DIR}/lib")
     TARGETS_NODE.forEach (file) ->
-      indexFile.write("var "+toModuleName(file)+' = '+"require('./lib/#{toModuleName(file)}');\n")
+      indexFile.write("var "+toModuleName(file)+' = '+"require('./lib/#{toModuleName(file)}').#{toModuleName(file)};\n")
       indexFile.write("exports.#{toModuleName(file)} = #{toModuleName(file)};\n")
-      copyFileToNode("src/#{file}", "lib/#{file}", "var Core = {};\nexports = Core;\n")
+      copyFileToNode("src/#{file}", "lib/#{file}", "var Core = {};\nexports.#{toModuleName(file)} = Core;\n")
     indexFile.end()
 
 toModuleName = (fileName) ->
