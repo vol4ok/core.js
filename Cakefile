@@ -21,13 +21,19 @@ TARGETS = [ # note: zhugrov a - a think it is more clear just to list a director
 
 build = (callback) ->
   ws = fs.createWriteStream "#{DST_LIB_DIR}/core.js", encoding: 'utf-8'
-  count = TARGETS.length
-  TARGETS.forEach (file) ->
-    console.log 'compile ', file
-    fs.readFile join(SRC_DIR, file), 'utf-8', (err, data) ->
-      data = "/*** #{file.toUpperCase()} ***/\n\n#{data}\n"
-      ws.write(data) unless err
-      ws.end() if --count is 0
+  fs.readFile SRC_DIR+'/_header.js', 'utf-8', (err, data) ->
+    if not err?
+      ws.write(data)
+      count = TARGETS.length
+      TARGETS.forEach (file) ->
+        console.log 'compile ', file
+        fs.readFile join(SRC_DIR, file), 'utf-8', (err, data) ->
+          data = "/*** #{file.toUpperCase()} ***/\n\n#{data}\n"
+          ws.write(data) unless err?
+          ws.end() if --count is 0
+    else
+      console.log util.inspect(err)
+      throw new Error('Could not read file')
 
 buildNode = () ->
   copyFileToNode('README.md', 'README.md')
@@ -54,7 +60,8 @@ copyFileToNode = (src, dest) ->
   dest = src if arguments.length == 1
   console.log "copy file #{__dirname+'/'+src}"
   fs.readFile(__dirname+'/'+src, 'utf-8', (err, data) ->
-    fs.writeFile(DST_NODE_DIR+'/'+dest, data, 'utf-8'))
+    data = "var Core = {};\nexports = Core;\n#{data}"
+    fs.writeFile(DST_NODE_DIR+'/'+dest, data, 'utf-8')) unless err?
 
 task 'build', 'Builds lib/ from src/', ->
   build()
