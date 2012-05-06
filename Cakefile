@@ -6,7 +6,7 @@ SRC_DIR = __dirname+'/src'
 DST_LIB_DIR = __dirname+'/build/lib'
 DST_NODE_DIR = __dirname+'/build/node'
 
-TARGETS = [ # note: zhugrov a - a think it is more clear just to list a directory content
+TARGETS = [
   'core.js'
   'collection.js'
   'array.js'
@@ -18,6 +18,16 @@ TARGETS = [ # note: zhugrov a - a think it is more clear just to list a director
   'dom.js'
   'events.js'
   'ajax.js' ]
+
+TARGETS_NODE = [
+  'core.js'
+  'collection.js'
+  'array.js'
+  'object.js'
+  'func.js'
+  'string.js'
+  'misc.js'
+  'async.js']
 
 build = (callback) ->
   ws = fs.createWriteStream "#{DST_LIB_DIR}/core.js", encoding: 'utf-8'
@@ -44,10 +54,10 @@ buildNode = () ->
   indexFile.once 'open', (fd) ->
     console.log('start to compile a node-js package')
     fs.mkdirSync("#{DST_NODE_DIR}/lib")
-    TARGETS.forEach (file) ->
+    TARGETS_NODE.forEach (file) ->
       indexFile.write("var "+toModuleName(file)+' = '+"require('./lib/#{toModuleName(file)}');\n")
       indexFile.write("exports.#{toModuleName(file)} = #{toModuleName(file)};\n")
-      copyFileToNode("src/#{file}", "lib/#{file}")
+      copyFileToNode("src/#{file}", "lib/#{file}", "var Core = {};\nexports = Core;\n")
     indexFile.end()
 
 toModuleName = (fileName) ->
@@ -56,11 +66,11 @@ toModuleName = (fileName) ->
   return match[1]
 
 ### copies source file to destination ###
-copyFileToNode = (src, dest) ->
+copyFileToNode = (src, dest, header) ->
   dest = src if arguments.length == 1
   console.log "copy file #{__dirname+'/'+src}"
   fs.readFile(__dirname+'/'+src, 'utf-8', (err, data) ->
-    data = "var Core = {};\nexports = Core;\n#{data}"
+    data = header + data if header?
     fs.writeFile(DST_NODE_DIR+'/'+dest, data, 'utf-8')) unless err?
 
 task 'build', 'Builds lib/ from src/', ->
