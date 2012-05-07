@@ -77,7 +77,7 @@
     var rest = slice.call(arguments, 1);
     return $.filter($.uniq(array), function(item) {
       return $.every(rest, function(other) {
-        return $.indexOf(other, item) >= 0;
+        return $.index(other, item) >= 0;
       });
     });
   };
