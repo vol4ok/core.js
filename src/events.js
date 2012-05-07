@@ -97,10 +97,8 @@
         self.off(name, on);
         fn.apply(this, arguments);
       };
-
       on.listener = fn;
       this.on(name, on);
-
       return this;
     },
 
@@ -111,7 +109,6 @@
       }
       if (this._events && this._events[name])
         this._events[name] = null;
-
       return this;
     },
 
@@ -119,13 +116,10 @@
     listeners: function (name) {
       if (!this._events) 
         this._events = {};
-
       if (!this._events[name])
         this._events[name] = [];
-
       if (!isArray(this._events[name]))
         this._events[name] = [this._events[name]];
-
       return this._events[name];
     }
   };
