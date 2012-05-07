@@ -52,6 +52,10 @@ var Core = (function() {
       $.m[scopes[i]] = exports;
     return exports
   };
+  
+  $.require = function(module) {
+    return $.m[module];
+  }
 
 })(Core);
 
