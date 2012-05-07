@@ -33,7 +33,7 @@
 
 
   $.defaults = function(obj) {
-    each(slice.call(arguments, 1), function(source) {
+    $.each(slice.call(arguments, 1), function(source) {
       for (var prop in source) {
         if (obj[prop] == null) obj[prop] = source[prop];
       }
