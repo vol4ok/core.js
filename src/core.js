@@ -14,7 +14,7 @@ var Core = (function() {
   $.slice   = Array.prototype.slice;
   $.hasProp = $.hasOwnProperty = Object.prototype.hasOwnProperty;
   $.indexOf = Array.prototype.indexOf;
-
+  
   $.bind = function(func, context) {
     return Function.prototype.bind.apply(func, slice.call(arguments, 1));
   };
