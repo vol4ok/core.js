@@ -43,19 +43,14 @@ var Core = (function() {
     return child;
   };
   
-  $.ns = $.namespace = function(target, name, block) {
-    if (arguments.length < 3) {
-      block  = name;
-      name   = target;
-      target = typeof exports !== 'undefined' ? exports : window;
-    }
-    var i, len, item
-      , top = target
-      , scopes = name.split('.');
+  $.ns = function(scopes, block) {
+    var i, len, item;
+    if (!$.m) $.m = {}
+    exports = {};
+    block(exports);
     for (i = 0, len = scopes.length; i < len; i++)
-      scope = scopes[i];
-      target = target[scope] || (target[scope] = {});
-    return block(target, top);
+      $.m[scopes[i]] = exports;
+    return exports
   };
 
 })(Core);
