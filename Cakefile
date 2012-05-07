@@ -46,18 +46,22 @@ build = (callback) ->
       throw new Error('Could not read file')
 
 buildNode = () ->
-  copyFileToNode('README.md', 'README.md')
-  copyFileToNode('package.json', 'package.json')
-  copyFileToNode('MIT-LICENSE.txt', 'MIT-LICENSE.txt')
-  copyFileToNode('.npmignore', '.npmignore')
+  copyFileToNode('README.md')
+  copyFileToNode('package.json')
+  copyFileToNode('MIT-LICENSE.txt')
+  copyFileToNode('.npmignore')
   indexFile = fs.createWriteStream("#{DST_NODE_DIR}/index.js", encoding: 'utf-8')
   indexFile.once 'open', (fd) ->
     console.log('start to compile a node-js package')
     fs.mkdirSync("#{DST_NODE_DIR}/lib")
+    imports = "" #imports part of a index.js file
+    merge = "" #merge part of a index.js file
     TARGETS_NODE.forEach (file) ->
-      indexFile.write("var "+toModuleName(file)+' = '+"require('./lib/#{toModuleName(file)}').#{toModuleName(file)};\n")
-      indexFile.write("exports.#{toModuleName(file)} = #{toModuleName(file)};\n")
+      imports += "var "+toModuleName(file)+' = '+"require('./lib/#{toModuleName(file)}').#{toModuleName(file)};\n"
+      merge += "core.extend(exports, #{toModuleName(file)});\n"
       copyFileToNode("src/#{file}", "lib/#{file}", "var Core = {};\nexports.#{toModuleName(file)} = Core;\n")
+    indexFile.write(imports)
+    indexFile.write(merge)
     indexFile.end()
 
 toModuleName = (fileName) ->
