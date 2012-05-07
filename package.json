@@ -1,14 +1,15 @@
 {
   "author": "vol4ok <hello@vol4ok.net>",
   "name": "core.js",
-  "version": "1.0.0",
+  "version": "0.1.2",
   "repository": {
     "url": "git://github.com/vol4ok/core.js.git"
   },
   "dependencies": {},
   "devDependencies": {
     "zappa": ">=0.3.3",
-    "colors": ">=0.6.0"
+    "colors": ">=0.6.0",
+    "node-promise": ">=0.5.2"
   },
   "optionalDependencies": {},
   "engines": {
