@@ -60,3 +60,4 @@ var Core = (function() {
 })(Core);
 
 var $ = Core;
+var require = $.require;
