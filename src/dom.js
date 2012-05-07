@@ -20,6 +20,15 @@
     , isFunction = $.isFunction
     , isObject   = $.isObject
     , isArray    = $.isArray;
+  
+  var extendWithEvent = $.extendWithEvent = function(target, event) {
+    if (target === undefined) target = {};
+    for (key in event) {
+      if (key !== "layerX" && key !== "layerY")
+        target[key] = event[key];
+    }
+    return target;
+  }
 
   $.Dom = (function(Core) {
     
@@ -532,13 +541,35 @@
     var Event
       , _zid = 1
       , handlers = {}
-      , specialEvents = {};
+      , specialEvents = {}
+      , transitionEnd = getTransitionEnd();
 
     specialEvents.click 
       = specialEvents.mousedown 
       = specialEvents.mouseup 
       = specialEvents.mousemove = 'MouseEvents';
-
+      
+    function getTransitionEnd() {
+      var support, thisBody, thisStyle, transitionEnd;
+      thisBody = document.body || document.documentElement;
+      thisStyle = thisBody.style;
+      support =  thisStyle.transition !== void 0 
+              || thisStyle.WebkitTransition !== void 0 
+              || thisStyle.MozTransition !== void 0 
+              || thisStyle.MsTransition !== void 0 
+              || thisStyle.OTransition !== void 0;
+      if (support) {
+        transitionEnd = "TransitionEnd";
+        if ($.engine.webkit)
+          transitionEnd = "webkitTransitionEnd";
+        else if ($.engine.gecko)
+          transitionEnd = "transitionend";
+        else if ($.engine.presto)
+          transitionEnd = "oTransitionEnd";
+        return transitionEnd;
+      }
+      return false;
+    }
 
     function zid(element) {
       return element._zid || (element._zid = _zid++);
@@ -589,23 +620,54 @@
         };
 
     function createProxy(event) {
-      var proxy = {};
-      for (key in event) {
-        if (key !== "layerX" && key !== "layerY")
-          proxy[key] = event[key]
-      }
-      proxy.originalEvent = event;
+      var proxy = extendWithEvent({originalEvent: event}, event);
       each(eventMethods, function(name, predicate) {
         proxy[name] = function(){
           this[predicate] = returnTrue;
           return event[name].apply(event, arguments);
         };
         proxy[predicate] = returnFalse;
-      })
+      });
       return proxy;
     }
+    
+    function mouseEnterLeaveHandler(cb, orig, repl) {
+      return function(event) {
+        var result
+          , related = event.relatedTarget;
+        if (!related || (related !== this && !this.contains(related))){
+          ev = createProxy(event);
+          ev.type = orig;
+          result = cb.apply(this, [ev].concat(slice.call(arguments,1)));
+          ev.type = repl;
+        }
+        return result;
+      };
+    }
 
-    var eventRepl = {mouseenter: "mouseover", mouseleave: "mouseout"};
+    var specEvent = {
+      mouseenter: {
+        event: "mouseover"
+      , handler: mouseEnterLeaveHandler
+      }, 
+      mouseleave: {
+        event: "mouseout"
+      , handler: mouseEnterLeaveHandler
+      }, 
+      transitionEnd: {
+        event: transitionEnd
+      , handler: function(cb, orig, repl) {
+          return function(event) {
+            var result;
+            ev = createProxy(event);
+            ev.type = orig;
+            result = cb.apply(this, [ev].concat(slice.call(arguments,1)));
+            ev.type = repl;
+            return result;
+          }
+        }
+      }
+    };
     
     function add(element, events, fn, selector, getDelegate) {
       var id = zid(element)
@@ -617,21 +679,9 @@
         var handler = parse(event)
           , e = handler.e;
         
-        if (eventRepl[e]) {
-          callback = (function(cb, orig, repl) {
-            return function(event) {
-              var result
-                , related = event.relatedTarget;
-              if (!related || (related !== this && !this.contains(related))){
-                ev = createProxy(event);
-                ev.type = orig;
-                result = cb.apply(this, [ev].concat(slice.call(arguments,1)));
-                ev.type = repl;
-              }
-              return result;
-            };
-          })(callback, e, eventRepl[e]);
-          handler.e = e = eventRepl[e];
+        if (specEvent[e]) {
+          callback = specEvent[e].handler(callback, e, specEvent[e].event);
+          handler.e = e = specEvent[e].event;
         }
         
         var proxyfn = function (event) {
@@ -671,8 +721,10 @@
     function remove(element, events, fn, selector) {
       var id = zid(element);
       eachEvent(events || '', fn, function(event, fn){
+        if (specEvent[event]) 
+          event = specEvent[event].event;
         findHandlers(element, event, fn, selector).forEach(function(handler){
-          delete handlers[id][handler.i];
+          delete handlers[id].remove(handler.i);
           element.removeEventListener(handler.e, handler.proxy, false);
         });
       });
@@ -775,7 +827,7 @@
 
     });
 
-    [ "focusin", "focusout", "load", "resize", 
+    [ "focusin", "focusout", "load", "resize", "transitionEnd",
       "scroll", "unload", "click", "dblclick", 
       "mousedown", "mouseup", "mousemove", "mouseover", 
       "mouseout", "mouseenter", "mouseleave", "change", 
