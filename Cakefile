@@ -1,12 +1,16 @@
-{join} = require('path')
-fs = require('fs')
-util = require('util')
+require 'colors'
 
-SRC_DIR = __dirname+'/src'
-DST_LIB_DIR = __dirname+'/build/lib'
-DST_NODE_DIR = __dirname+'/build/node'
+$ = {}
+$ extends require('path-ex')
+$ extends require('fs-ex')
+{inspect} = require('util')
 
-TARGETS = [
+SRC_DIR          = __dirname + '/src'
+DST_BROWSER_DIR  = __dirname + '/browser'
+DST_NODE_DIR     = __dirname + '/lib'
+
+BROWSER_TARGETS = [
+  '_header.js',
   'core.js'
   'collection.js'
   'array.js'
@@ -17,9 +21,11 @@ TARGETS = [
   'async.js'
   'dom.js'
   'events.js'
-  'ajax.js' ]
+  'ajax.js'
+  'browser.js'
+  '_footer.js' ]
 
-TARGETS_NODE = [
+NODE_TARGETS = [
   'core.js'
   'collection.js'
   'array.js'
@@ -29,56 +35,42 @@ TARGETS_NODE = [
   'misc.js'
   'async.js']
 
-build = (callback) ->
-  ws = fs.createWriteStream "#{DST_LIB_DIR}/core.js", encoding: 'utf-8'
-  fs.readFile SRC_DIR+'/_header.js', 'utf-8', (err, data) ->
-    if not err?
-      ws.write(data)
-      count = TARGETS.length
-      TARGETS.forEach (file) ->
-        console.log 'compile ', file
-        fs.readFile join(SRC_DIR, file), 'utf-8', (err, data) ->
-          data = "/*** #{file.toUpperCase()} ***/\n\n#{data}\n"
-          ws.write(data) unless err?
-          ws.end() if --count is 0
-    else
-      console.log util.inspect(err)
-      throw new Error('Could not read file')
+build_browser = (callback) ->
+  console.log 'builds a browser package:'.cyan
+  $.mkdirpSync(DST_BROWSER_DIR)
+  ws = $.createWriteStream "#{DST_BROWSER_DIR}/core.js", encoding: 'utf-8'
+  count = BROWSER_TARGETS.length
+  BROWSER_TARGETS.forEach (file) ->
+    console.log 'compile '.green, file
+    data = $.readFileSync $.join(SRC_DIR, file), 'utf-8'
+    data = "/*** #{file.toUpperCase()} ***/\n\n#{data}\n" unless file[0] is '_'
+    ws.write(data)
+  ws.end()
 
-buildNode = () ->
-  copyFileToNode('README.md')
-  copyFileToNode('package.json')
-  copyFileToNode('MIT-LICENSE.txt')
-  copyFileToNode('.npmignore')
-  indexFile = fs.createWriteStream("#{DST_NODE_DIR}/index.js", encoding: 'utf-8')
-  indexFile.once 'open', (fd) ->
-    console.log('start to compile a node-js package')
-    fs.mkdirSync("#{DST_NODE_DIR}/lib")
-    imports = "" #imports part of a index.js file
-    merge = "" #merge part of a index.js file
-    TARGETS_NODE.forEach (file) ->
-      imports += "var "+toModuleName(file)+' = '+"require('./lib/#{toModuleName(file)}').#{toModuleName(file)};\n"
-      merge += "core.extend(exports, #{toModuleName(file)});\n"
-      copyFileToNode("src/#{file}", "lib/#{file}", "var Core = {};\nexports.#{toModuleName(file)} = Core;\n")
-    indexFile.write(imports)
-    indexFile.write(merge)
-    indexFile.end()
 
-toModuleName = (fileName) ->
-  filePattern = /(.+).js/
-  match = filePattern.exec(fileName)
-  return match[1]
+build_node = () ->
+  console.log 'builds a node.js package:'.cyan
+  $.mkdirpSync(DST_NODE_DIR)
+  indexFile = $.createWriteStream("#{DST_NODE_DIR}/index.js", encoding: 'utf-8')
+  indexFile.write("var $ = require('./core');\n")
+  merge = "" #merge part of a index.js file
+  NODE_TARGETS.forEach (file) ->
+    moduleName = $.removeExt(file)
+    merge += "$.ext(require('./#{moduleName}'));\n" unless moduleName is 'core'
+    console.log 'compile '.green, file
+    data = $.readFileSync($.join(SRC_DIR, file), 'utf-8')
+    data = data.replace '})(Core);', '})(exports);'
+    $.writeFileSync($.join(DST_NODE_DIR, file), data, 'utf-8')
+  indexFile.write(merge)
+  indexFile.write("module.exports = $;")
+  indexFile.end()
 
-### copies source file to destination ###
-copyFileToNode = (src, dest, header) ->
-  dest = src if arguments.length == 1
-  console.log "copy file #{__dirname+'/'+src}"
-  fs.readFile(__dirname+'/'+src, 'utf-8', (err, data) ->
-    data = header + data if header?
-    fs.writeFile(DST_NODE_DIR+'/'+dest, data, 'utf-8')) unless err?
+task 'build', 'Builds browser and node.js packages from src', ->
+  build_browser()
+  build_node()
+  
+task 'build:browser', 'Builds a browser package from src', ->
+  build_browser()
 
-task 'build', 'Builds lib/ from src/', ->
-  build()
-
-task 'build:node', 'Builds a node.js packages from src', ->
-  buildNode()
+task 'build:node', 'Builds a node.js package from src', ->
+  build_node()
