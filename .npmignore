@@ -1,10 +1,5 @@
+.npmignore
 *.coffee
 .DS_Store
 .git*
-*.nbproj
-*.nproj
-*.cson
-_lab
-doc
 src
-test
