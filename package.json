@@ -7,9 +7,9 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "zappa": ">=0.3.3",
     "colors": ">=0.6.0",
-    "node-promise": ">=0.5.2"
+    "path-ex": ">=0.0.1",
+    "fs-ex": ">=0.0.1"
   },
   "optionalDependencies": {},
   "engines": {
