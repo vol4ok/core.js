@@ -2,6 +2,7 @@
   "author": "vol4ok <hello@vol4ok.net>",
   "name": "core.js",
   "version": "0.1.2",
+  "main": "./lib/index.js",
   "repository": {
     "url": "git://github.com/vol4ok/core.js.git"
   },
