@@ -51,6 +51,3 @@
   }
 
 })(Core);
-
-var $ = Core;
-var require = $.require;
