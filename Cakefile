@@ -10,7 +10,7 @@ DST_BROWSER_DIR  = __dirname + '/browser'
 DST_NODE_DIR     = __dirname + '/lib'
 
 BROWSER_TARGETS = [
-  '_header.js',
+  '_header.js'
   'core.js'
   'collection.js'
   'array.js'
@@ -18,11 +18,11 @@ BROWSER_TARGETS = [
   'func.js'
   'string.js'
   'misc.js'
+  'browser.js'
   'async.js'
   'dom.js'
   'events.js'
   'ajax.js'
-  'browser.js'
   '_footer.js' ]
 
 NODE_TARGETS = [
