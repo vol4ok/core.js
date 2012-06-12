@@ -53,6 +53,15 @@
           , 'td': tableRow 
           , 'th': tableRow
           , '*': document.createElement('div')
+        }
+      , cssNumber        = { 
+            'column-count': 1
+          , 'columns': 1
+          , 'font-weight': 1
+          , 'line-height': 1
+          , 'opacity': 1
+          , 'z-index': 1
+          , 'zoom': 1 
         };
       
         
@@ -277,7 +286,7 @@
           });
       },
       
-      text: function() {
+      text: function(text) {
         return text === undefined ?
           (this.length > 0 ? this[0].textContent : null) :
           this.each(function() { 
@@ -439,7 +448,17 @@
           width: obj.width,
           height: obj.height
         };
-      }
+      },
+      
+      position: function() {
+        if(this.length == 0) return null;
+        return {
+          left: this[0].offsetLeft,
+          top: this[0].offsetTop,
+          width: this[0].width,
+          height: this[0].height
+        };
+      },
       
     };
     
