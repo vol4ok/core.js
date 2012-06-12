@@ -19,4 +19,28 @@
   $.noop = function(){};
   $.identity = function(value) { return value; };
   
+  $.max = function(a, b) {
+    if (arguments > 2) {
+      var a = arguments
+        , max = -Infinity
+        , i, l = a.length;
+      for (i = 0; i < l; i++)
+        if (a[i] > max) max = a[i];
+      return max
+    }
+    return Math.max(a,b);
+  };
+  
+  $.min = function(a, b) {
+    if (arguments > 2) {
+      var a = arguments
+        , min = Infinity
+        , i, l = a.length;
+      for (i = 0; i < l; i++)
+        if (a[i] < min) min = a[i];
+      return min
+    }
+    return Math.min(a,b);
+  };
+  
 })(Core);
