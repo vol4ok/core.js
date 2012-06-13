@@ -1,3 +1,5 @@
 _lab
 node_modules
 *.iml
+build/
+.idea/
