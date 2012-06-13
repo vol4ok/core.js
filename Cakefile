@@ -23,6 +23,7 @@ BROWSER_TARGETS = [
   'dom.js'
   'events.js'
   'ajax.js'
+  'promises.js'
   '_footer.js' ]
 
 NODE_TARGETS = [
@@ -33,7 +34,9 @@ NODE_TARGETS = [
   'func.js'
   'string.js'
   'misc.js'
-  'async.js']
+  'async.js'
+  'promises.js'
+]
 
 build_browser = (callback) ->
   console.log 'builds a browser package:'.cyan
