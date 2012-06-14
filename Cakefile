@@ -23,7 +23,7 @@ BROWSER_TARGETS = [
   'dom.js'
   'events.js'
   'ajax.js'
-  'promises.js'
+  'promise.js'
   '_footer.js' ]
 
 NODE_TARGETS = [
@@ -35,7 +35,7 @@ NODE_TARGETS = [
   'string.js'
   'misc.js'
   'async.js'
-  'promises.js'
+  'promise.js'
 ]
 
 build_browser = (callback) ->
