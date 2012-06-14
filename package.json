@@ -10,7 +10,9 @@
   "devDependencies": {
     "colors": ">=0.6.0",
     "path-ex": ">=0.0.1",
-    "fs-ex": ">=0.0.1"
+    "fs-ex": ">=0.0.1",
+    "vows": ">=0.6.2",
+    "assert": ">=0.4.9"
   },
   "optionalDependencies": {},
   "engines": {
