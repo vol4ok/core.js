@@ -98,7 +98,36 @@ vows.describe('Test Promise Methods').addBatch({
             });
         },
         'then method error': function(err, value) {
-            assert.instanceOf(value, Error, "the value should be error");
+            assert.instanceOf(value, Error, 'the value should be error');
+        }
+    },
+
+    'chain a sync transformation error': {
+        topic: function() {
+            var that = this;
+
+            function asyncOne() {
+                var deferred = new Deferred();
+                process.nextTick(function() {
+                    deferred.reject(new Error('a sample error'));
+                });
+                return deferred.promise();
+            }
+
+            function asyncTwo(value) {
+                var deferred = new Deferred();
+                process.nextTick(function() {
+                    deferred.resolve(value * 2);
+                });
+                return deferred.promise();
+            }
+
+            asyncOne().chain(asyncTwo)
+                      .then(function(value) { throw new Error('this callback should not be invoked'); },
+                            function(err) { that.callback(null, err); });
+        },
+        'chain method async error': function(err, value) {
+            assert.instanceOf(value, Error, 'the value should be error');
         }
     }
 }).run();
