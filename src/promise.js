@@ -30,7 +30,7 @@
       if (!this._isComplete) {
         throw new Error("Promise is not resolved yet!");
       }
-      if (!this._error !== null) {
+      if (this._error !== null) {
         throw this._error;
       }
 
@@ -127,8 +127,9 @@
      */
     transform: function(transformation) {
       var deferred = new Deferred();
+      var that = this;
       this.onComplete(function(promise) {
-        if (!this.hasValue()) {
+        if (!that.hasValue()) {
           deferred.reject(promise.error());
         } else {
           try {
@@ -164,11 +165,13 @@
             var listener = this._successListeners[i];
             listener(this.value());
           }
-        } else {
-          if (!this._errorHandled) {
-            throw this._error;
-          }
         }
+//        todo zhugrov a - should we throw exception in case if we don't explicitly stated that we have handled a exception
+//        else {
+//          if (!this._errorHandled) {
+//            throw this._error;
+//          }
+//        }
       } finally {
         for (var i = 0; i < this._completionListeners.length; i++) {
           var listener = this._completionListeners[i];
