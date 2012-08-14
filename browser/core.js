@@ -1356,19 +1356,10 @@ var Core = (function() {
 (function($){
 
   var extend     = $.extend
-    , camelize   = $.camelize
-    , dasherize  = $.dasherize
-    , trim       = $.trim
-    , each       = $.each
-    , uniq       = $.uniq
-    , slice      = $.slice
     , compact    = $.compact
-    , flatten    = $.flatten
-    , pluck      = $.pluck
-    , map        = $.map
     , isFunction = $.isFunction
-    , isObject   = $.isObject
-    , isArray    = $.isArray;
+    , isArray    = $.isArray
+    , flatten    = $.flatten;
 
   var qwery = (function () {
     var doc = document
@@ -1443,10 +1434,10 @@ var Core = (function() {
       for (; i < l; i++) fn(a[i])
     }
 
-    function flatten(ar) {
-      for (var r = [], i = 0, l = ar.length; i < l; ++i) arrayLike(ar[i]) ? (r = r.concat(ar[i])) : (r[r.length] = ar[i])
-      return r
-    }
+    // function flatten(ar) {
+    //   for (var r = [], i = 0, l = ar.length; i < l; ++i) arrayLike(ar[i]) ? (r = r.concat(ar[i])) : (r[r.length] = ar[i])
+    //   return r
+    // }
 
     function arrayify(ar) {
       var i = 0, l = ar.length, r = []
@@ -1836,24 +1827,27 @@ var Core = (function() {
     }
 
 
-    /**
-     * @param {string} s
-     * @return {string}
-     */
-    function camelize(s) {
-      return s.replace(/-(.)/g, function (m, m1) {
-        return m1.toUpperCase()
-      })
-    }
+    // /**
+    //  * @param {string} s
+    //  * @return {string}
+    //  */
+    // function camelize(s) {
+    //   return s.replace(/-(.)/g, function (m, m1) {
+    //     return m1.toUpperCase()
+    //   })
+    // }
 
 
-    /**
-     * @param {string} s
-     * @return {string}
-     */
-    function decamelize(s) {
-      return s ? s.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase() : s
-    }
+    // /**
+    //  * @param {string} s
+    //  * @return {string}
+    //  */
+    // function decamelize(s) {
+    //   return s ? s.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase() : s
+    // }
+
+    var camelize = $.camelize
+      , decamelize = $.dasherize;
 
 
     /**
