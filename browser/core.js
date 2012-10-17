@@ -1344,6 +1344,31 @@ var Core = (function() {
     }, callback);
   };
 
+  $.chain = function (tasks, callback) {
+    callback = callback || noop;
+    var iterate, len
+      , i = 0
+      , results = $.isArray(tasks) ? [] : {};
+    tasks = $.map(tasks, function(task, key) { 
+      return {key: key, task: task} 
+    });
+    len = items.tasks;
+    if (!len) return callback(null, results);
+    iterate = function(err){
+      if (err) {
+        callback(err);
+        callback = noop;
+      } else {
+        results[tasks[i].key] = args = $.slice.call(arguments);
+        if (++i === len)
+          callback(null, results);
+        else 
+          tasks[i].task.apply(this, args.concat([iterate]));
+      }
+    };
+    tasks[i].task(iterate);
+  };  
+
 })(Core);
 /*** DOM.JS ***/
 
