@@ -1352,21 +1352,23 @@ var Core = (function() {
     tasks = $.map(tasks, function(task, key) { 
       return {key: key, task: task} 
     });
-    len = items.tasks;
+    len = tasks.length;
     if (!len) return callback(null, results);
-    iterate = function(err){
-      if (err) {
+    wrap = function(args){
+      try {
+        tasks[i].task.apply(this, args);
+      } catch(err) {
         callback(err);
-        callback = noop;
-      } else {
-        results[tasks[i].key] = args = $.slice.call(arguments);
-        if (++i === len)
-          callback(null, results);
-        else 
-          tasks[i].task.apply(this, args.concat([iterate]));
       }
     };
-    tasks[i].task(iterate);
+    iterate = function(){
+      results[tasks[i].key] = args = $.slice.call(arguments);
+      if (++i === len)
+        callback(null, results);
+      else
+        wrap(args.concat([iterate]));
+    };
+    wrap([iterate]);
   };  
 
 })(Core);

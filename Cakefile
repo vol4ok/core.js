@@ -27,6 +27,7 @@ BROWSER_TARGETS = [
   '_footer.js' ]
 
 NODE_TARGETS = [
+  '_header.js'
   'core.js'
   'collection.js'
   'array.js'
@@ -35,7 +36,6 @@ NODE_TARGETS = [
   'string.js'
   'misc.js'
   'async.js'
-  'promise.js'
 ]
 
 build_browser = (callback) ->
@@ -51,7 +51,7 @@ build_browser = (callback) ->
   ws.end()
 
 
-build_node = () ->
+build_node0 = () ->
   console.log 'builds a node.js package:'.cyan
   $.mkdirpSync(DST_NODE_DIR)
   indexFile = $.createWriteStream("#{DST_NODE_DIR}/index.js", encoding: 'utf-8')
@@ -67,6 +67,19 @@ build_node = () ->
   indexFile.write(merge)
   indexFile.write("module.exports = $;")
   indexFile.end()
+
+build_node = (callback) ->
+  console.log 'builds a node.js package:'.cyan
+  $.mkdirpSync(DST_NODE_DIR)
+  ws = $.createWriteStream "#{DST_NODE_DIR}/index.js", encoding: 'utf-8'
+  count = NODE_TARGETS.length
+  NODE_TARGETS.forEach (file) ->
+    console.log 'compile '.green, file
+    data = $.readFileSync $.join(SRC_DIR, file), 'utf-8'
+    data = "/*** #{file.toUpperCase()} ***/\n\n#{data}\n" unless file[0] is '_'
+    ws.write(data)
+  ws.write("\nmodule.exports = Core;")
+  ws.end()
 
 task 'build', 'Builds browser and node.js packages from src', ->
   build_browser()
