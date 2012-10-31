@@ -1376,7 +1376,6 @@ var Core = (function() {
     });
     len = tasks.length;
     (iterate = function() {
-      console.log("iterate", i, len);
       if (++i > len) return;
       var args = $.slice.call(arguments);
       try {
