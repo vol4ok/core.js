@@ -1,0 +1,18 @@
+[submodule "vendor/underscore"]
+	path = vendor/underscore
+	url = git://github.com/documentcloud/underscore.git
+[submodule "vendor/underscore.string"]
+	path = vendor/underscore.string
+	url = git://github.com/epeli/underscore.string.git
+[submodule "vendor/bonzo"]
+	path = vendor/bonzo
+	url = git://github.com/ded/bonzo.git
+[submodule "vendor/qwery"]
+	path = vendor/qwery
+	url = git://github.com/ded/qwery.git
+[submodule "vendor/bean"]
+	path = vendor/bean
+	url = git://github.com/fat/bean.git
+[submodule "vendor/domready"]
+	path = vendor/domready
+	url = git://github.com/ded/domready.git

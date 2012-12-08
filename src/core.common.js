@@ -2,11 +2,11 @@
  * Copyright (c) 2012 Andrew Volkov <hello@vol4ok.net>
  */
 
- var Core = (function() {
-    Core.constructor = function(){};
-    Core.VERSION = "0.4.0";
-    function Core() { return Core.constructor.apply(this, arguments) }
-    return Core;
+var Core = (function() {
+  Core.constructor = function(){};
+  Core.VERSION = "0.4.0";
+  function Core() { return Core.constructor.apply(this, arguments) }
+  return Core;
 })();
 
 (function($) {
@@ -42,25 +42,10 @@
     child.__super__ = parent.prototype;
     return child;
   };
-  
-  $.ns = function(scopes, block) {
-    var i, len, item;
-    if (!$.m) $.m = {}
-    module = {
-      scopes: scopes,
-      exports: {}
-    };
-    block(module, module.exports);
-    for (i = 0, len = scopes.length; i < len; i++)
-      $.m[scopes[i]] = module;
-    return module.exports
-  };
-  
-  $.require = function(module) {
-    return $.m[module].exports;
-  }
 
 })(Core);
 
 var $ = Core;
-var require = $.require;
+
+$.ext(require("underscore"))
+$.ext(require("underscore.string"))
