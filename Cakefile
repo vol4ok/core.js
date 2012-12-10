@@ -1,27 +1,49 @@
-# require process.env["BUILD_ENV"]
 nb = require "nbuild"
-$ = require "core.js"
+$ = require "./lib/core.js"
 
 task "sbuild", ->
+  $.series [
+    (cb) -> build4browser(cb)
+    (cb) -> build4node(cb)
+  ], (err) -> console.log if err then "fail!" else "done!"
 
+build4node = (callback) ->
+  console.log "Build core.js for node"
+  $.chain [
+    (done) -> 
+      $.parallel [
+          (cb) -> nb.read("src/core.common.js", cb)
+          (cb) -> nb.read("src/utils.js", cb)
+          (cb) -> nb.read("src/string.js", cb)
+          (cb) -> nb.read("src/async.js", cb)
+          (cb) -> nb.read("src/misc.js", cb)
+          (cb) -> cb(null, "module.exports = $;")
+        ], done
+    (err, results, done) -> 
+      nb.sf_merge(results, "lib/core.js", {}, done)
+    (err) -> 
+      console.log "=========== Complete!"
+      callback(null)
+  ], (err) ->
+    console.log err
+    callback(err)
 
-build4node ->
-
-
-build4browser ->
+build4browser = (callback) ->
   bjs = (path, name, cb) ->
     nb.fs_js path
     , {transform: [nb.TRANSFORM_NAMESPACE_WRAPPER], namespace: name}
     , (err, str) -> 
       console.log if err then err else "#{name} compiled!"
       cb.apply(this, arguments)
+
+  console.log "Build core.js for browser"
   $.chain [
     (done) -> 
       $.parallel [
-          (cb) -> nb.read("src/core.js", cb)
+          (cb) -> nb.read("src/core.browser.js", cb)
           (cb) -> bjs("vendor/underscore/underscore.js", "underscore", cb)
+          (cb) -> nb.read("src/utils.js", cb)
           (cb) -> bjs("vendor/underscore.string/lib/underscore.string.js", "underscore.string", cb)
-          (cb) -> nb.read("src/common.js", cb)
           (cb) -> nb.read("src/string.js", cb)
           (cb) -> nb.read("src/async.js", cb)
           (cb) -> nb.read("src/browser.js", cb)
@@ -32,9 +54,17 @@ build4browser ->
           (cb) -> bjs("vendor/domready/ready.js", "ready", cb)
           (cb) -> nb.read("src/dom.js", cb)
         ], done
-  , (err, results, done) -> 
-      console.log "sf_merge", err, results
-      nb.sf_merge(results, "dist/core.js", {}, done)
-  ], (err, results) -> 
-    console.log "done!", arguments
-    console.log if err then err else "=========== Complete!"
+    (err, results, done) -> 
+      console.log "Merging..."
+      nb.ss_merge(results, {}, done)
+    (err, str, done) ->
+      $.parallel [
+        (cb) -> nb.write("dist/core.js", str, cb)
+        (cb) -> nb.sf_js(str, "dist/core.min.js", compress: yes, cb)
+      ], done
+    (err) -> 
+      console.log "=========== Complete!"
+      callback(err)
+  ], (err) ->
+    console.log err
+    callback(err)

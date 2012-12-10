@@ -3,9 +3,7 @@
  */
 
 (function($){
-  
   _s = require("underscore.string");
-  delete _.VERSION;
+  delete _s.VERSION;
   $.ext(_s);
-
 })(Core);

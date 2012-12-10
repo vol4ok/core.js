@@ -6,5 +6,4 @@
   _ = require("underscore");
   delete _.VERSION;
   $.ext(_);
-
 })(Core);

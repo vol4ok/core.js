@@ -46,6 +46,3 @@ var Core = (function() {
 })(Core);
 
 var $ = Core;
-
-$.ext(require("underscore"))
-$.ext(require("underscore.string"))

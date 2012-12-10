@@ -2,11 +2,11 @@
  * Copyright (c) 2012 Andrew Volkov <hello@vol4ok.net>
  */
 
- var Core = (function() {
-    Core.constructor = function(){};
-    Core.VERSION = "0.4.0";
-    function Core() { return Core.constructor.apply(this, arguments) }
-    return Core;
+var Core = (function() {
+  Core.constructor = function(){};
+  Core.VERSION = "0.4.0";
+  function Core() { return Core.constructor.apply(this, arguments) }
+  return Core;
 })();
 
 (function($) {
@@ -1032,6 +1032,16 @@ $.ns(['underscore'], function (module, exports) {
     }.call(this));
 });
 
+/*!
+ * Copyright (c) 2012 Andrew Volkov <hello@vol4ok.net>
+ */
+
+(function($){
+  _ = require("underscore");
+  delete _.VERSION;
+  $.ext(_);
+})(Core);
+
 $.ns(['underscore.string'], function (module, exports) {
     !function (root, String) {
         'use strict';
@@ -1589,22 +1599,9 @@ $.ns(['underscore.string'], function (module, exports) {
  */
 
 (function($){
-  _ = require("underscore");
-  delete _.VERSION;
-  $.ext(_);
-
-})(Core);
-
-/*!
- * Copyright (c) 2012 Andrew Volkov <hello@vol4ok.net>
- */
-
-(function($){
-  
   _s = require("underscore.string");
-  delete _.VERSION;
+  delete _s.VERSION;
   $.ext(_s);
-
 })(Core);
 
 /*!

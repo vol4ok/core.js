@@ -1,0 +1,26 @@
+{
+  "name": "core.js",
+  "version": "0.4.0",
+  "description": "ERROR: No README.md file found!",
+  "main": "lib/core.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/vol4ok/core.js.git"
+  },
+  "keywords": [
+    "core",
+    "js"
+  ],
+  "author": "Andrew Volkov <admin@vol4ok.net>",
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "devDependencies": {
+    "nbuild": "*"
+  }
+}
