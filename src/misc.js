@@ -1,5 +1,7 @@
 (function($){
 
+  var guid_rexp = /^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i;
+
   $.guid = function() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
       var 
@@ -8,7 +10,11 @@
       return v.toString(16);
     }).toUpperCase();
   };
-  
+
+  $.checkGuid = function(id) {
+    return guid_rexp.test(id);
+  };
+
   var idCounter = 0;
   $.uniqId = function(prefix) {
     var id = idCounter++;
