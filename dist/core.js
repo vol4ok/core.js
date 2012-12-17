@@ -1040,6 +1040,14 @@ $.ns(['underscore'], function (module, exports) {
   _ = require("underscore");
   delete _.VERSION;
   $.ext(_);
+
+  // Array Remove - By John Resig (MIT Licensed)
+  Array.prototype.remove = function(from, to) {
+    var rest = this.slice((to || from) + 1 || this.length);
+    this.length = from < 0 ? this.length + from : from;
+    return this.push.apply(this, rest);
+  };
+
 })(Core);
 
 $.ns(['underscore.string'], function (module, exports) {
@@ -1876,6 +1884,8 @@ $.ns(['underscore.string'], function (module, exports) {
 
 (function($){
 
+  var guid_rexp = /^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i;
+
   $.guid = function() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
       var 
@@ -1884,7 +1894,11 @@ $.ns(['underscore.string'], function (module, exports) {
       return v.toString(16);
     }).toUpperCase();
   };
-  
+
+  $.checkGuid = function(id) {
+    return guid_rexp.test(id);
+  };
+
   var idCounter = 0;
   $.uniqId = function(prefix) {
     var id = idCounter++;
