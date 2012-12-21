@@ -49,6 +49,7 @@ build4browser = (callback) ->
           (cb) -> nb.read("src/string.js", cb)
           (cb) -> nb.read("src/async.js", cb)
           (cb) -> nb.read("src/browser.js", cb)
+          (cb) -> nb.read("src/events.js", cb)
           (cb) -> nb.read("src/misc.js", cb)
           (cb) -> bjs("vendor/bonzo/bonzo.js", "bonzo", cb)
           (cb) -> bjs("vendor/bean/bean.js", "bean",cb)
