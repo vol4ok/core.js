@@ -1,11 +1,13 @@
+$ = require "./node_modules/core.js/lib/core.js"
 nb = require "nbuild"
-$ = require "./lib/core.js"
 
-task "sbuild", ->
+build = (done) ->
   $.series [
     (cb) -> build4browser(cb)
     (cb) -> build4node(cb)
-  ], (err) -> console.log if err then "fail!" else "done!"
+  ], (err) -> 
+    console.log if err then "fail!" else "done!"
+    done()
 
 build4node = (callback) ->
   console.log "Build core.js for node"
@@ -68,3 +70,7 @@ build4browser = (callback) ->
   ], (err) ->
     console.log err
     callback(err)
+
+if task?
+  task "sbuild", -> build(->)
+  task "build",  -> build(->)

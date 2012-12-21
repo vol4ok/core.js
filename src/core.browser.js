@@ -15,7 +15,7 @@ var Core = (function() {
   $.hasProp = $.hasOwnProperty = Object.prototype.hasOwnProperty;
   $.indexOf = Array.prototype.indexOf;
   
-  $.bind = function(func, context) {
+  $.bind = function(func) {
     return Function.prototype.bind.apply(func, slice.call(arguments, 1));
   };
 
@@ -44,7 +44,7 @@ var Core = (function() {
   };
   
   $.ns = function(scopes, block) {
-    var i, len, item;
+    var i, len;
     if (!$.m) $.m = {}
     module = {
       scopes: scopes,

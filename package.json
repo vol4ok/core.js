@@ -25,6 +25,7 @@
     "underscore.string": "*"
   },
   "devDependencies": {
+    "core.js": "0.4.1",
     "nbuild": "*"
   }
 }
