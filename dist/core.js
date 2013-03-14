@@ -536,7 +536,7 @@ $.ns(['underscore'], function (module, exports) {
         };
         _.bindAll = function (obj) {
             var funcs = slice.call(arguments, 1);
-            if (funcs.length == 0)
+            if (funcs.length === 0)
                 funcs = _.functions(obj);
             each(funcs, function (f) {
                 obj[f] = _.bind(obj[f], obj);
@@ -943,6 +943,7 @@ $.ns(['underscore'], function (module, exports) {
             };
         var escaper = /\\|'|\r|\n|\t|\u2028|\u2029/g;
         _.template = function (text, data, settings) {
+            var render;
             settings = _.defaults({}, settings, _.templateSettings);
             var matcher = new RegExp([
                     (settings.escape || noMatch).source,
@@ -972,7 +973,7 @@ $.ns(['underscore'], function (module, exports) {
                 source = 'with(obj||{}){\n' + source + '}\n';
             source = 'var __t,__p=\'\',__j=Array.prototype.join,' + 'print=function(){__p+=__j.call(arguments,\'\');};\n' + source + 'return __p;\n';
             try {
-                var render = new Function(settings.variable || 'obj', '_', source);
+                render = new Function(settings.variable || 'obj', '_', source);
             } catch (e) {
                 e.source = source;
                 throw e;
@@ -2450,7 +2451,7 @@ $.ns(['bonzo'], function (module, exports) {
                 return this.each(function (el) {
                     each(c, function (c) {
                         if (c) {
-                            typeof opt_condition !== 'undefined' ? opt_condition ? addClass(el, c) : removeClass(el, c) : hasClass(el, c) ? removeClass(el, c) : addClass(el, c);
+                            typeof opt_condition !== 'undefined' ? opt_condition ? !hasClass(el, c) && addClass(el, c) : removeClass(el, c) : hasClass(el, c) ? removeClass(el, c) : addClass(el, c);
                         }
                     });
                 });
@@ -2725,7 +2726,7 @@ $.ns(['bonzo'], function (module, exports) {
                 if (ns && el && el.nodeType !== 1)
                     el = el.nextSibling;
                 do {
-                    if ((!tag || el.nodeType == 1) && (!tb || el.tagName.toLowerCase() != 'tbody')) {
+                    if ((!tag || el.nodeType == 1) && (!tb || el.tagName && el.tagName != 'TBODY')) {
                         els.push(el);
                     }
                 } while (el = el.nextSibling);
@@ -3285,7 +3286,7 @@ $.ns(['qwery'], function (module, exports) {
     (function (name, context, definition) {
         if (typeof module != 'undefined' && module.exports)
             module.exports = definition();
-        else if (typeof context['define'] == 'function' && context['define']['amd'])
+        else if (typeof define == 'function' && define.amd)
             define(definition);
         else
             context[name] = definition();
